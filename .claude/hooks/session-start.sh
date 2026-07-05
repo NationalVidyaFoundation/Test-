@@ -10,6 +10,11 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
+# Run in the background so session startup isn't blocked by the install.
+# The CLI is only needed when the notebooklm skill is invoked, which is never
+# in the first seconds of a session, so the async race window is not a concern.
+echo '{"async": true, "asyncTimeout": 300000}'
+
 # Already installed? Nothing to do (keeps resumes fast).
 if command -v notebooklm >/dev/null 2>&1; then
   echo "notebooklm CLI already installed: $(notebooklm --version 2>/dev/null || echo present)"
